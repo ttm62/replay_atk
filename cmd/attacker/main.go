@@ -10,8 +10,8 @@ import (
 func main() {
 	// Yêu cầu được ghi lại từ một lần gửi hợp lệ trước đó
 	data := `{"message": "Hello, secure world!"}`
-	timestamp := "1700000000" // Timestamp cũ
-	nonce := "1234567890"     // Nonce đã được sử dụng
+	timestamp := "1740786768"      // Timestamp cũ
+	nonce := "1740786768013134000" // Nonce đã được sử dụng
 	hmacSignature := "ABC123FakeSignature"
 
 	req, _ := http.NewRequest("POST", "http://localhost:8080/secure", bytes.NewBuffer([]byte(data)))

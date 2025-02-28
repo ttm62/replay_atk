@@ -6,7 +6,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 )
@@ -25,6 +25,8 @@ func main() {
 	nonce := fmt.Sprintf("%d", time.Now().UnixNano()) // Nonce duy nhất cho mỗi request
 	hmacSignature := generateHMAC(data + timestamp + nonce)
 
+	fmt.Println(data, timestamp, nonce)
+
 	req, _ := http.NewRequest("POST", "http://localhost:8080/secure", bytes.NewBuffer([]byte(data)))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Timestamp", timestamp)
@@ -39,6 +41,6 @@ func main() {
 	}
 	defer resp.Body.Close()
 
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, _ := io.ReadAll(resp.Body)
 	fmt.Println(string(body))
 }

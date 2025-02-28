@@ -8,7 +8,9 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -45,6 +47,20 @@ func validateHMAC(next http.Handler) http.Handler {
 		if hmacHeader != expectedHMAC {
 			http.Error(w, "Invalid HMAC", http.StatusUnauthorized)
 			return
+		}
+
+		// Kiểm tra timestamp
+		reqTs, err := strconv.ParseInt(timestamp, 10, 64)
+		if err != nil {
+			http.Error(w, "Error parsing timestamp", http.StatusUnauthorized)
+			return
+		}
+
+		t := time.Unix(reqTs, 0)
+
+		now := time.Now()
+		if now.Sub(t) > 5*time.Second {
+			http.Error(w, "Invalid timestamp", http.StatusUnauthorized)
 		}
 
 		// Lưu lại nonce để chống replay
