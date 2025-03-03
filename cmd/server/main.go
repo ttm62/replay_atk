@@ -38,14 +38,14 @@ func validateHMAC(next http.Handler) http.Handler {
 
 		// Ngăn chặn replay attack bằng cách kiểm tra nonce
 		if _, exists := requestCache[nonce]; exists {
-			http.Error(w, "Replay attack detected", http.StatusUnauthorized)
+			http.Error(w, "Replay attack detected | nonce", http.StatusUnauthorized)
 			return
 		}
 
 		// Xác thực chữ ký HMAC
 		expectedHMAC := generateHMAC(string(body) + timestamp + nonce)
 		if hmacHeader != expectedHMAC {
-			http.Error(w, "Invalid HMAC", http.StatusUnauthorized)
+			http.Error(w, "Replay attack detected | Invalid HMAC", http.StatusUnauthorized)
 			return
 		}
 
@@ -60,7 +60,7 @@ func validateHMAC(next http.Handler) http.Handler {
 
 		now := time.Now()
 		if now.Sub(t) > 5*time.Second {
-			http.Error(w, "Invalid timestamp", http.StatusUnauthorized)
+			http.Error(w, "Replay attack detected | timestamp", http.StatusUnauthorized)
 		}
 
 		// Lưu lại nonce để chống replay
